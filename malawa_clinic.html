@@ -1,0 +1,3050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Management System</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0066cc">
+  <link rel="icon" href="logo.png" type="image/png">
+</head>
+
+<body>
+
+
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .datetime {
+            color: #e74c3c;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .menu-item h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .menu-item p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .window {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .window h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        #patientDiagnosis {
+            font-size: 1.2em;
+            line-height: 1.5;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            background: #bdc3c7;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-success:disabled {
+            background: #bdc3c7;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-warning:disabled {
+            background: #bdc3c7;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .table th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-expired {
+            background: inherit !important;
+            color: inherit;
+        }
+
+        .status-low-stock {
+            background: inherit !important;
+            color: inherit;
+        }
+
+        .status-near-expiry {
+            background: inherit !important;
+            color: inherit;
+        }
+
+        .back-btn {
+            background: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #c0392b;
+        }
+
+        .receipt {
+            background: white;
+            padding: 30px;
+            border: 2px solid #2c3e50;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #bdc3c7;
+        }
+
+        .receipt-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 2px solid #2c3e50;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+
+        .treatment-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .treatment-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+
+        .report-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .report-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .patient-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .patient-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .settings-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* New styles for daily report */
+        .daily-report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .daily-report-date {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .daily-report-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .daily-report-summary-item {
+            text-align: center;
+            padding: 10px;
+            min-width: 150px;
+        }
+        
+        .daily-report-summary-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .daily-report-summary-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        /* Center aligned buttons section */
+        .center-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .center-buttons .menu-item {
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <img src="Logo.png" alt="PDS Clinic Logo" style="max-width: 150px; height: auto; margin-bottom: 15px;">
+            <h1>Medical Centre & Special Diabetic Clinic</h1>
+            <h2 style="color: #34495e; font-size: 1.3em; margin: 5px 0 15px 0; font-weight: normal;">Malawa - Kuruwita</h2>
+            <div class="datetime" id="datetime"></div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="mainMenu">
+            <div class="menu-grid">
+                <div class="menu-item" onclick="showWindow('patientWindow')">
+                    <h3>👤 Patient & Diagnosis</h3>
+                    <p>Register patients and manage diagnoses</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('treatmentWindow')">
+                    <h3>💊 Treatment & Medicine</h3>
+                    <p>Prescribe treatments and medications</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('billingWindow')">
+                    <h3>💳 Billing</h3>
+                    <p>Generate bills and receipts</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('inventoryWindow')">
+                    <h3>📦 Drug Inventory</h3>
+                    <p>Manage medicine stock and expiry</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('historyWindow')">
+                    <h3>📋 Patient History</h3>
+                    <p>View patient treatment history</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('patientListWindow')">
+                    <h3>📝 All Patients</h3>
+                    <p>View all registered patients</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('reportsWindow')">
+                    <h3>📊 Revenue Report</h3>
+                    <p>View financial reports and analytics</p>
+                </div>
+                <div class="menu-item" onclick="showWindow('dailyReportWindow')">
+                    <h3>📅 Daily Patient Report</h3>
+                    <p>View daily patient payments</p>
+                </div>
+            </div>
+
+            <!-- Center Aligned Buttons Section -->
+            <div class="center-buttons">
+                <div class="menu-item" onclick="showWindow('settingsWindow')">
+                    <h3>⚙️ Settings</h3>
+                    <p>System settings and database management</p>
+                </div>
+                <div class="menu-item" onclick="exitSystem()">
+                    <h3>🚪 Exit</h3>
+                    <p>Close the system</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient & Diagnosis Window -->
+        <div id="patientWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>👤 Patient & Diagnosis</h2>
+            
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Patient ID</label>
+                        <input type="text" id="patientId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Patient Name</label>
+                        <input type="text" id="patientName" placeholder="Enter patient name">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="patientAge" placeholder="Enter age">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="patientGender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Contact No.</label>
+                        <input type="tel" id="patientContact" placeholder="Enter contact number">
+                    </div>
+                    <div class="form-group">
+                        <label>Diagnosis</label>
+                        <textarea id="patientDiagnosis" rows="4" placeholder="Enter diagnosis details"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Load Patient by ID</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="loadPatientId" placeholder="Enter Patient ID">
+                            <button class="btn" onclick="loadPatientById()">Load</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-success" onclick="registerNewPatient()" id="registerNewBtn">Register New Patient</button>
+                <button class="btn btn-warning" onclick="updatePatientDetails()" id="updatePatientBtn">Update Patient Details</button>
+                <button class="btn btn-danger" onclick="clearDiagnosis()">Clear Diagnosis</button>
+                <button class="btn" onclick="showWindow('treatmentWindow')">Open Treatment & Medicine</button>
+            </div>
+
+            <div id="patientAlert"></div>
+        </div>
+
+        <!-- Treatment & Medicine Window -->
+        <div id="treatmentWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>💊 Treatment & Medicine</h2>
+            
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Current Patient</label>
+                        <div id="treatmentPatientDisplay" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <strong id="treatmentPatientName">No patient selected</strong>
+                            <div style="margin-top: 5px;">
+                                <button class="btn" onclick="changeTreatmentPatient()">Change Patient</button>
+                            </div>
+                        </div>
+                        <div id="treatmentPatientSelectContainer" style="display: none;">
+                            <select id="treatmentPatientSelect">
+                                <option value="">Select Patient</option>
+                            </select>
+                            <button class="btn" onclick="cancelChangeTreatmentPatient()">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Drug</label>
+                        <select id="treatmentDrugSelect">
+                            <option value="">Select Drug</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="text" id="treatmentQuantity" placeholder="Enter quantity">
+                    </div>
+                    <div class="form-group">
+                        <label>Price per Unit</label>
+                        <input type="number" id="treatmentPrice" step="0.01" readonly>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Additional Service</label>
+                        <input type="text" id="additionalService" placeholder="Enter additional service">
+                    </div>
+                    <div class="form-group">
+                        <label>Service Charge</label>
+                        <input type="text" id="serviceCharge" placeholder="Enter service charge">
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-success" onclick="addTreatment()">Add Treatment</button>
+                        <button class="btn btn-warning" onclick="addAdditionalService()">Add Service</button>
+                        <button class="btn" onclick="showWindow('billingWindow')">Open Billing</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="treatment-list">
+                <h3>Current Treatment List</h3>
+                <div id="currentTreatmentList"></div>
+            </div>
+
+            <div id="treatmentAlert"></div>
+        </div>
+
+        <!-- Patient History Window -->
+        <div id="historyWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>📋 Patient History</h2>
+            
+            <div class="form-group" style="max-width: 400px;">
+                <label>Select Patient</label>
+                <select id="historyPatientSelect" onchange="loadPatientHistory()">
+                    <option value="">Select Patient</option>
+                </select>
+            </div>
+
+            <div id="patientHistoryDisplay"></div>
+        </div>
+
+        <!-- Drug Inventory Window -->
+        <div id="inventoryWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>📦 Drug Inventory</h2>
+            
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Drug Name</label>
+                        <input type="text" id="drugName" placeholder="Enter drug name">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="text" id="drugStock" placeholder="Enter stock quantity">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Unit Price</label>
+                        <input type="number" id="drugPrice" step="0.01" placeholder="Enter unit price">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="date" id="drugExpiry">
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="addNewDrug()">Add New Drug</button>
+                <button class="btn btn-warning" onclick="updateDrug()">Update Drug</button>
+                <button class="btn" onclick="showImportSection()">📊 Import from Excel</button>
+            </div>
+
+            <!-- Inventory Filter Buttons -->
+            <div style="text-align: center; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 Quick Inventory Filters</h4>
+                <button class="btn" onclick="showAllDrugs()" style="background: #17a2b8; color: white;">📦 Show All Drugs</button>
+                <button class="btn btn-danger" onclick="showExpiredDrugs()">⚠️ Expired Drugs</button>
+                <button class="btn btn-warning" onclick="showNearExpiryDrugs()">⏰ Near Expiry</button>
+                <button class="btn" onclick="showLowStockDrugs()" style="background: #fd7e14; color: white;">📉 Low Stock</button>
+                <div id="inventoryFilterStatus" style="margin-top: 10px; font-weight: bold; color: #495057;"></div>
+            </div>
+
+            <!-- Excel Import Section -->
+            <div id="importSection" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3498db;">
+                <h3>📊 Import Drugs from Excel</h3>
+                <p><strong>Excel Format Required:</strong> Your Excel file should have columns in this exact order:</p>
+                <div style="background: white; padding: 10px; border-radius: 5px; margin: 10px 0; font-family: monospace;">
+                    <strong>Column A:</strong> Drug Name<br>
+                    <strong>Column B:</strong> Stock Quantity (number)<br>
+                    <strong>Column C:</strong> Unit Price (number, e.g., 2.50)<br>
+                    <strong>Column D:</strong> Expiry Date (YYYY-MM-DD format, e.g., 2024-12-31)
+                </div>
+                
+                <div class="form-group">
+                    <label>Select Excel File (.xlsx, .xls, .csv)</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 10px;">
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-success" onclick="importExcelData()">📥 Import Data</button>
+                    <button class="btn" onclick="downloadTemplate()">📄 Download Template</button>
+                    <button class="btn btn-danger" onclick="hideImportSection()">Cancel</button>
+                </div>
+                
+                <div id="importPreview" style="margin-top: 15px;"></div>
+            </div>
+
+            <table class="table" id="inventoryTable">
+                <thead>
+                    <tr>
+                        <th>Drug Name</th>
+                        <th>Stock</th>
+                        <th>Unit Price</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                </tbody>
+            </table>
+
+            <div id="inventoryAlert"></div>
+        </div>
+
+        <!-- All Patients Window -->
+        <div id="patientListWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>📝 All Patients List</h2>
+            
+            <table class="table" id="patientListTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Contact</th>
+                        <th>Last Visit</th>
+                    </tr>
+                </thead>
+                <tbody id="patientListTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Billing Window -->
+        <div id="billingWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>💳 Billing & Receipt</h2>
+            
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Current Patient</label>
+                        <div id="billingPatientDisplay" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <strong id="billingPatientName">No patient selected</strong>
+                            <div style="margin-top: 5px;">
+                                <button class="btn" onclick="changeBillingPatient()">Change Patient</button>
+                            </div>
+                        </div>
+                        <div id="billingPatientSelectContainer" style="display: none;">
+                            <select id="billingPatientSelect">
+                                <option value="">Select Patient</option>
+                            </select>
+                            <button class="btn" onclick="cancelChangeBillingPatient()">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Doctor's Consultation Fee</label>
+                        <input type="text" id="consultationFee" placeholder="Enter consultation fee">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod">
+                            <option value="Cash">Cash</option>
+                            <option value="Credit Card">Credit Card</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="generateBill()" style="width: 100%; margin-top: 20px;">Generate Bill</button>
+                </div>
+            </div>
+
+            <div id="billDisplay"></div>
+            <div id="billingAlert"></div>
+        </div>
+
+        <!-- Reports Window -->
+        <div id="reportsWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>📊 Revenue Reports</h2>
+            
+            <div class="form-grid">
+                <div class="report-card">
+                    <h3 id="todayRevenue">0.00</h3>
+                    <p>Today's Revenue</p>
+                </div>
+                <div class="report-card">
+                    <h3 id="monthRevenue">0.00</h3>
+                    <p>This Month's Revenue</p>
+                </div>
+                <div class="report-card">
+                    <h3 id="totalPatients">0</h3>
+                    <p>Total Patients</p>
+                </div>
+                <div class="report-card">
+                    <h3 id="todayPatients">0</h3>
+                    <p>Today's Patients</p>
+                </div>
+            </div>
+
+            <div class="form-group" style="max-width: 300px;">
+                <label>Select Month for Report</label>
+                <input type="month" id="reportMonth" onchange="generateMonthlyReport()">
+            </div>
+
+            <div id="monthlyReportDisplay"></div>
+        </div>
+
+        <!-- Daily Patient Report Window -->
+        <div id="dailyReportWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>📅 Daily Patient Report</h2>
+            
+            <div class="daily-report-header">
+                <div class="daily-report-date" id="dailyReportDate"></div>
+                <div>
+                    <button class="btn btn-success" onclick="printDailyReport()">🖨️ Print Report</button>
+                    <button class="btn" onclick="exportDailyReport()">📥 Export CSV</button>
+                </div>
+            </div>
+            
+            <div class="daily-report-summary">
+                <div class="daily-report-summary-item">
+                    <div class="daily-report-summary-value" id="dailyTotalPatients">0</div>
+                    <div class="daily-report-summary-label">Total Patients</div>
+                </div>
+                <div class="daily-report-summary-item">
+                    <div class="daily-report-summary-value" id="dailyTotalRevenue">0.00</div>
+                    <div class="daily-report-summary-label">Total Revenue</div>
+                </div>
+                <div class="daily-report-summary-item">
+                    <div class="daily-report-summary-value" id="dailyAvgPayment">0.00</div>
+                    <div class="daily-report-summary-label">Avg. Payment</div>
+                </div>
+            </div>
+            
+            <table class="table" id="dailyReportTable">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th>Contact</th>
+                        <th>Payment Method</th>
+                        <th>Amount Paid</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="dailyReportTableBody">
+                </tbody>
+            </table>
+            
+            <div id="dailyReportAlert"></div>
+        </div>
+
+        <!-- Settings Window -->
+        <div id="settingsWindow" class="window">
+            <button class="btn back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            <h2>⚙️ System Settings</h2>
+            
+            <div class="settings-section">
+                <h3>🗃️ Database Management</h3>
+                <p>Manage your system's data and settings</p>
+                
+                <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3498db;">
+                    <h4>🧹 Automatic History Cleanup</h4>
+                    <p><strong>Patient history older than 6 months is automatically deleted</strong> when the system starts to keep the database optimized. This includes:</p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Treatment records older than 6 months</li>
+                        <li>Billing records older than 6 months</li>
+                    </ul>
+                    <p><strong>Note:</strong> Patient basic information (name, contact, etc.) is always preserved. You can also manually trigger cleanup using the button below.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Warning:</strong> Resetting the database will permanently delete all data including patients, treatments, bills, and inventory. This action cannot be undone!
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Current Database Status:</h4>
+                    <div class="patient-card">
+                        <p><strong>Total Patients:</strong> <span id="settingsPatientCount">0</span></p>
+                        <p><strong>Total Treatments:</strong> <span id="settingsTreatmentCount">0</span></p>
+                        <p><strong>Total Bills:</strong> <span id="settingsBillCount">0</span></p>
+                        <p><strong>Total Drugs in Inventory:</strong> <span id="settingsDrugCount">0</span></p>
+                        <p><strong>Total Revenue:</strong> <span id="settingsTotalRevenue">0.00</span></p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-warning" onclick="exportData()">📤 Export Data Backup</button>
+                    <button class="btn" onclick="showImportDatabase()">📥 Import Database</button>
+                    <button class="btn" onclick="manualCleanupHistory()">🧹 Cleanup Old History</button>
+                    <button class="btn btn-danger" onclick="confirmDatabaseReset()">🗑️ Reset Database</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; font-weight: bold;">
+                    This program is registered to Dr. Harsha Wijesekara - Reg.No: 001-A
+                </div>
+                
+                <!-- Database Import Section -->
+                <div id="databaseImportSection" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #28a745;">
+                    <h3>📥 Import Database Backup</h3>
+                    <p><strong>Import a previously exported database backup file (.json)</strong></p>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #ffc107;">
+                        <strong>⚠️ Important:</strong> Importing will replace ALL current data with the backup data. Make sure to export your current data first if you want to keep it!
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Select Database Backup File (.json)</label>
+                        <input type="file" id="databaseFile" accept=".json" style="margin-bottom: 10px;">
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-success" onclick="importDatabaseFile()">📥 Import Database</button>
+                        <button class="btn btn-danger" onclick="hideDatabaseImport()">Cancel</button>
+                    </div>
+                    
+                    <div id="databaseImportPreview" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <div id="settingsAlert"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let patients = JSON.parse(localStorage.getItem('patients')) || [];
+        let drugs = JSON.parse(localStorage.getItem('drugs')) || [];
+        let treatments = JSON.parse(localStorage.getItem('treatments')) || [];
+        let bills = JSON.parse(localStorage.getItem('bills')) || [];
+        let currentPatientId = patients.length > 0 ? Math.max(...patients.map(p => p.id)) + 1 : 1;
+        let currentTreatments = [];
+        let currentPatient = null; // Track current patient after registration/update
+
+        // Initialize system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to maximize the window
+            try {
+                // Method 1: Request fullscreen (works in most browsers)
+                if (window.screen && window.screen.availWidth && window.screen.availHeight) {
+                    window.resizeTo(window.screen.availWidth, window.screen.availHeight);
+                    window.moveTo(0, 0);
+                }
+                
+                // Method 2: Alternative approach for Chrome
+                if (window.outerHeight < window.screen.availHeight || window.outerWidth < window.screen.availWidth) {
+                    window.resizeTo(window.screen.availWidth, window.screen.availHeight);
+                }
+            } catch (e) {
+                console.log('Window resize not supported in this context');
+            }
+            
+            // Clean up old patient history automatically
+            cleanupOldPatientHistory();
+            
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            generateNextPatientId();
+            populateDropdowns();
+            displayInventory();
+            displayPatientList();
+            updateReports();
+            
+            // Add event listeners for patient selection changes
+            document.getElementById('treatmentPatientSelect').addEventListener('change', function() {
+                const patientId = parseInt(this.value);
+                if (patientId) {
+                    currentPatient = patients.find(p => p.id === patientId);
+                    updateTreatmentPatientDisplay();
+                }
+            });
+            
+            document.getElementById('billingPatientSelect').addEventListener('change', function() {
+                const patientId = parseInt(this.value);
+                if (patientId) {
+                    currentPatient = patients.find(p => p.id === patientId);
+                    updateBillingPatientDisplay();
+                    loadPatientForBilling();
+                }
+            });
+        });
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Navigation functions
+        function showWindow(windowId) {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+            document.getElementById(windowId).classList.add('active');
+            
+            // Refresh data when opening windows
+            if (windowId === 'inventoryWindow') displayInventory();
+            if (windowId === 'patientListWindow') displayPatientList();
+            if (windowId === 'reportsWindow') updateReports();
+            if (windowId === 'settingsWindow') updateSettingsDisplay();
+            if (windowId === 'historyWindow' || windowId === 'treatmentWindow' || windowId === 'billingWindow') {
+                populateDropdowns();
+            }
+            
+            // Update patient display for Treatment and Billing windows
+            if (windowId === 'treatmentWindow') {
+                updateTreatmentPatientDisplay();
+            } else if (windowId === 'billingWindow') {
+                updateBillingPatientDisplay();
+            }
+            
+            // Load daily report data
+            if (windowId === 'dailyReportWindow') {
+                loadDailyReport();
+            }
+        }
+
+        function showMainMenu() {
+            document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+            document.getElementById('mainMenu').style.display = 'block';
+            
+            // Clear current patient when returning to main menu
+            currentPatient = null;
+        }
+
+        // Patient management functions
+        function generateNextPatientId() {
+            document.getElementById('patientId').value = currentPatientId;
+            updatePatientButtons('new');
+        }
+
+        function updatePatientButtons(mode) {
+            const registerBtn = document.getElementById('registerNewBtn');
+            const updateBtn = document.getElementById('updatePatientBtn');
+            
+            if (mode === 'new') {
+                // New patient mode - enable register, disable update
+                registerBtn.disabled = false;
+                registerBtn.style.opacity = '1';
+                registerBtn.style.cursor = 'pointer';
+                
+                updateBtn.disabled = true;
+                updateBtn.style.opacity = '0.5';
+                updateBtn.style.cursor = 'not-allowed';
+            } else if (mode === 'existing') {
+                // Existing patient mode - disable register, enable update
+                registerBtn.disabled = true;
+                registerBtn.style.opacity = '0.5';
+                registerBtn.style.cursor = 'not-allowed';
+                
+                updateBtn.disabled = false;
+                updateBtn.style.opacity = '1';
+                updateBtn.style.cursor = 'pointer';
+            }
+        }
+
+        function registerNewPatient() {
+            const name = document.getElementById('patientName').value.trim();
+            const age = document.getElementById('patientAge').value;
+            const gender = document.getElementById('patientGender').value;
+            const contact = document.getElementById('patientContact').value.trim();
+            const diagnosis = document.getElementById('patientDiagnosis').value.trim();
+
+            if (!name || !age || !gender || !contact) {
+                showAlert('patientAlert', 'Please fill in all required fields!', 'danger');
+                return;
+            }
+
+            const patient = {
+                id: currentPatientId,
+                name: name,
+                age: parseInt(age),
+                gender: gender,
+                contact: contact,
+                diagnosis: diagnosis,
+                registrationDate: new Date().toISOString().split('T')[0],
+                lastVisit: new Date().toISOString().split('T')[0]
+            };
+
+            patients.push(patient);
+            localStorage.setItem('patients', JSON.stringify(patients));
+            
+            // Set current patient
+            currentPatient = patient;
+            
+            currentPatientId++;
+            generateNextPatientId();
+            clearPatientForm();
+            populateDropdowns();
+            
+            showAlert('patientAlert', `Patient ${name} registered successfully with ID: ${patient.id}`, 'success');
+        }
+
+        function loadPatientById() {
+            const id = parseInt(document.getElementById('loadPatientId').value);
+            const patient = patients.find(p => p.id === id);
+            
+            if (patient) {
+                document.getElementById('patientId').value = patient.id;
+                document.getElementById('patientName').value = patient.name;
+                document.getElementById('patientAge').value = patient.age;
+                document.getElementById('patientGender').value = patient.gender;
+                document.getElementById('patientContact').value = patient.contact;
+                document.getElementById('patientDiagnosis').value = patient.diagnosis;
+                updatePatientButtons('existing');
+                showAlert('patientAlert', 'Patient loaded successfully!', 'success');
+            } else {
+                showAlert('patientAlert', 'Patient not found!', 'danger');
+            }
+        }
+
+        function updatePatientDetails() {
+            const id = parseInt(document.getElementById('patientId').value);
+            const patient = patients.find(p => p.id === id);
+            
+            if (patient) {
+                patient.name = document.getElementById('patientName').value.trim();
+                patient.age = parseInt(document.getElementById('patientAge').value);
+                patient.gender = document.getElementById('patientGender').value;
+                patient.contact = document.getElementById('patientContact').value.trim();
+                patient.diagnosis = document.getElementById('patientDiagnosis').value.trim();
+                patient.lastVisit = new Date().toISOString().split('T')[0];
+                
+                localStorage.setItem('patients', JSON.stringify(patients));
+                populateDropdowns();
+                
+                // Set current patient
+                currentPatient = patient;
+                
+                showAlert('patientAlert', 'Patient details updated successfully!', 'success');
+                
+                // Clear the form and reset the ID fields
+                clearPatientForm(); 
+            } else {
+                showAlert('patientAlert', 'Patient not found!', 'danger');
+            }
+        }
+
+        function clearDiagnosis() {
+            document.getElementById('patientDiagnosis').value = '';
+            showAlert('patientAlert', 'Diagnosis field cleared!', 'success');
+        }
+
+        function clearPatientForm() {
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientAge').value = '';
+            document.getElementById('patientGender').value = '';
+            document.getElementById('patientContact').value = '';
+            document.getElementById('patientDiagnosis').value = '';
+            document.getElementById('loadPatientId').value = '';
+            generateNextPatientId();
+        }
+
+        // Treatment management functions
+        function populateDropdowns() {
+            // Populate patient dropdowns
+            const patientSelects = ['treatmentPatientSelect', 'historyPatientSelect', 'billingPatientSelect'];
+            patientSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Select Patient</option>';
+                patients.forEach(patient => {
+                    select.innerHTML += `<option value="${patient.id}">${patient.name} (ID: ${patient.id})</option>`;
+                });
+            });
+
+            // Populate drug dropdown with alphabetical sorting
+            const drugSelect = document.getElementById('treatmentDrugSelect');
+            drugSelect.innerHTML = '<option value="">Select Drug</option>';
+            
+            // Sort drugs alphabetically by name and filter for available stock
+            const sortedDrugs = drugs
+                .filter(drug => drug.stock > 0)
+                .sort((a, b) => a.name.localeCompare(b.name));
+            
+            sortedDrugs.forEach(drug => {
+                drugSelect.innerHTML += `<option value="${drug.id}">${drug.name} - ${drug.price} (Stock: ${drug.stock})</option>`;
+            });
+
+            // Update drug price when selected
+            drugSelect.onchange = function() {
+                const drugId = parseInt(this.value);
+                const drug = drugs.find(d => d.id === drugId);
+                document.getElementById('treatmentPrice').value = drug ? drug.price : '';
+            };
+        }
+
+        function addTreatment() {
+            // Use current patient instead of dropdown selection
+            if (!currentPatient) {
+                showAlert('treatmentAlert', 'No patient selected!', 'danger');
+                return;
+            }
+            
+            const patientId = currentPatient.id;
+            const drugId = parseInt(document.getElementById('treatmentDrugSelect').value);
+            const quantity = parseInt(document.getElementById('treatmentQuantity').value);
+
+            if (!drugId || !quantity) {
+                showAlert('treatmentAlert', 'Please fill in all fields!', 'danger');
+                return;
+            }
+
+            const patient = patients.find(p => p.id === patientId);
+            const drug = drugs.find(d => d.id === drugId);
+
+            if (drug.stock < quantity) {
+                showAlert('treatmentAlert', 'Insufficient stock!', 'danger');
+                return;
+            }
+
+            const treatment = {
+                id: Date.now(),
+                patientId: patientId,
+                patientName: patient.name,
+                drugId: drugId,
+                drugName: drug.name,
+                quantity: quantity,
+                price: drug.price,
+                total: quantity * drug.price,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString(),
+                type: 'medication',
+                diagnosis: patient.diagnosis || 'No diagnosis recorded'
+            };
+
+            currentTreatments.push(treatment);
+            displayCurrentTreatments();
+            
+            // Clear form
+            document.getElementById('treatmentQuantity').value = '';
+            showAlert('treatmentAlert', 'Treatment added successfully!', 'success');
+        }
+
+        function addAdditionalService() {
+            // Use current patient instead of dropdown selection
+            if (!currentPatient) {
+                showAlert('treatmentAlert', 'No patient selected!', 'danger');
+                return;
+            }
+            
+            const patientId = currentPatient.id;
+            const service = document.getElementById('additionalService').value.trim();
+            const charge = parseFloat(document.getElementById('serviceCharge').value);
+
+            if (!service || !charge) {
+                showAlert('treatmentAlert', 'Please fill in all service fields!', 'danger');
+                return;
+            }
+
+            const patient = patients.find(p => p.id === patientId);
+            const treatment = {
+                id: Date.now(),
+                patientId: patientId,
+                patientName: patient.name,
+                drugId: null,
+                drugName: service,
+                quantity: 1,
+                price: charge,
+                total: charge,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString(),
+                type: 'service',
+                diagnosis: patient.diagnosis || 'No diagnosis recorded'
+            };
+
+            currentTreatments.push(treatment);
+            displayCurrentTreatments();
+            
+            // Clear form
+            document.getElementById('additionalService').value = '';
+            document.getElementById('serviceCharge').value = '';
+            showAlert('treatmentAlert', 'Additional service added successfully!', 'success');
+        }
+
+        function displayCurrentTreatments() {
+            const container = document.getElementById('currentTreatmentList');
+            if (currentTreatments.length === 0) {
+                container.innerHTML = '<p>No treatments added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            currentTreatments.forEach(treatment => {
+                html += `
+                    <div class="treatment-item">
+                        <strong>${treatment.drugName}</strong><br>
+                        Quantity: ${treatment.quantity} | Price: ${treatment.price} | Total: ${treatment.total.toFixed(2)}
+                        <button class="btn btn-danger" style="float: right; padding: 5px 10px;" onclick="removeTreatment(${treatment.id})">Remove</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeTreatment(treatmentId) {
+            currentTreatments = currentTreatments.filter(t => t.id !== treatmentId);
+            displayCurrentTreatments();
+        }
+
+        // Patient history functions
+        function loadPatientHistory() {
+            const patientId = parseInt(document.getElementById('historyPatientSelect').value);
+            const container = document.getElementById('patientHistoryDisplay');
+            
+            if (!patientId) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const patient = patients.find(p => p.id === patientId);
+            const patientTreatments = treatments.filter(t => t.patientId === patientId);
+            const patientBills = bills.filter(b => b.patientId === patientId);
+
+            if (patientTreatments.length === 0 && patientBills.length === 0) {
+                container.innerHTML = `
+                    <div class="patient-card">
+                        <h4>${patient.name} (ID: ${patient.id})</h4>
+                        <p><strong>Age:</strong> ${patient.age} | <strong>Gender:</strong> ${patient.gender}</p>
+                        <p><strong>Contact:</strong> ${patient.contact}</p>
+                        <p><strong>Registration Date:</strong> ${patient.registrationDate || 'Not recorded'}</p>
+                        <p><strong>Current Diagnosis:</strong> ${patient.diagnosis || 'No diagnosis recorded'}</p>
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px; border-left: 4px solid #ffc107;">
+                            <strong>📋 Status:</strong> No treatment history found for this patient.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="patient-card">
+                    <h4>👤 ${patient.name} (ID: ${patient.id})</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                        <div><strong>Age:</strong> ${patient.age}</div>
+                        <div><strong>Gender:</strong> ${patient.gender}</div>
+                        <div><strong>Contact:</strong> ${patient.contact}</div>
+                        <div><strong>Registration:</strong> ${patient.registrationDate || 'Not recorded'}</div>
+                        <div><strong>Last Visit:</strong> ${patient.lastVisit || 'Not recorded'}</div>
+                    </div>
+                    <div style="background: #e8f4fd; padding: 10px; border-radius: 5px; border-left: 4px solid #3498db;">
+                        <strong>🩺 Current Diagnosis:</strong> ${patient.diagnosis || 'No current diagnosis recorded'}
+                    </div>
+                </div>
+            `;
+
+            // Combine treatments and bills data to get complete visit history
+            const visitHistory = {};
+            
+            // Add treatment data
+            patientTreatments.forEach(treatment => {
+                if (!visitHistory[treatment.date]) {
+                    visitHistory[treatment.date] = {
+                        date: treatment.date,
+                        diagnosis: treatment.diagnosis || 'No diagnosis recorded',
+                        treatments: [],
+                        totalCost: 0,
+                        consultationFee: 0,
+                        paymentMethod: 'Not recorded'
+                    };
+                }
+                visitHistory[treatment.date].treatments.push(treatment);
+            });
+
+            // Add billing data to get complete visit information
+            patientBills.forEach(bill => {
+                if (!visitHistory[bill.date]) {
+                    visitHistory[bill.date] = {
+                        date: bill.date,
+                        diagnosis: 'No diagnosis recorded',
+                        treatments: [],
+                        totalCost: 0,
+                        consultationFee: 0,
+                        paymentMethod: 'Not recorded'
+                    };
+                }
+                visitHistory[bill.date].totalCost = bill.total;
+                visitHistory[bill.date].consultationFee = bill.consultationFee;
+                visitHistory[bill.date].paymentMethod = bill.paymentMethod;
+                
+                // If bill has treatments, use them (they might have more complete data)
+                if (bill.treatments && bill.treatments.length > 0) {
+                    visitHistory[bill.date].treatments = bill.treatments;
+                    // Get diagnosis from bill treatments if available
+                    if (bill.treatments[0].diagnosis && bill.treatments[0].diagnosis !== 'No diagnosis recorded') {
+                        visitHistory[bill.date].diagnosis = bill.treatments[0].diagnosis;
+                    }
+                }
+            });
+
+            // Sort visits by date (oldest first for proper visit numbering)
+            const sortedVisits = Object.values(visitHistory).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (sortedVisits.length === 0) {
+                html += '<p>No visit history found.</p>';
+            } else {
+                html += `
+                    <h3>📋 Patient History</h3>
+                    <table class="table" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%; text-align: center;">Visit</th>
+                                <th style="width: 15%;">Date</th>
+                                <th style="width: 35%;">Diagnosis</th>
+                                <th style="width: 40%;">Treatments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                sortedVisits.forEach((visit, index) => {
+                    const visitNumber = index + 1;
+                    const isRecentVisit = index === sortedVisits.length - 1;
+                    
+                    // Separate medications and services
+                    const medications = visit.treatments.filter(t => t.type === 'medication');
+                    const services = visit.treatments.filter(t => t.type === 'service');
+                    
+                    // Build treatments display
+                    let treatmentsDisplay = '';
+                    
+                    if (medications.length > 0) {
+                        treatmentsDisplay += '<div style="margin-bottom: 8px;"><strong>💊 Drugs:</strong><br>';
+                        treatmentsDisplay += medications.map(med => `• ${med.drugName}`).join('<br>');
+                        treatmentsDisplay += '</div>';
+                    }
+                    
+                    if (services.length > 0) {
+                        treatmentsDisplay += '<div><strong>🏥 Services:</strong><br>';
+                        treatmentsDisplay += services.map(service => `• ${service.drugName}`).join('<br>');
+                        treatmentsDisplay += '</div>';
+                    }
+                    
+                    if (medications.length === 0 && services.length === 0) {
+                        treatmentsDisplay = '<em style="color: #6c757d;">No treatments recorded</em>';
+                    }
+                    
+                    const diagnosisDisplay = visit.diagnosis !== 'No diagnosis recorded' 
+                        ? visit.diagnosis 
+                        : '<em style="color: #6c757d;">No diagnosis recorded</em>';
+                    
+                    // Get time from first treatment if available
+                    const visitTime = visit.treatments.length > 0 && visit.treatments[0].time ? 
+                        `<br><small style="color: #666;">${visit.treatments[0].time}</small>` : '';
+                    
+                    html += `
+                        <tr ${isRecentVisit ? 'style="background: #fff5f5; border-left: 4px solid #e74c3c;"' : ''}>
+                            <td style="text-align: center; font-weight: bold; color: #2c3e50;">
+                                ${visitNumber}${isRecentVisit ? '<br><small style="color: #e74c3c; font-weight: normal;">(Latest)</small>' : ''}
+                            </td>
+                            <td style="font-weight: 500;">${visit.date}${visitTime}</td>
+                            <td style="line-height: 1.4;">${diagnosisDisplay}</td>
+                            <td style="line-height: 1.4;">${treatmentsDisplay}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+                `;
+
+                // Add summary statistics
+                const totalVisits = sortedVisits.length;
+                const totalSpent = sortedVisits.reduce((sum, visit) => sum + (visit.totalCost || 0), 0);
+                const totalMedications = sortedVisits.reduce((sum, visit) => sum + visit.treatments.filter(t => t.type === 'medication').length, 0);
+                const totalServices = sortedVisits.reduce((sum, visit) => sum + visit.treatments.filter(t => t.type === 'service').length, 0);
+
+                html += `
+                    <div class="patient-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; margin-top: 20px;">
+                        <h4 style="color: white; margin-bottom: 15px;">📊 Patient Summary</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
+                            <div>
+                                <div style="font-size: 1.5em; font-weight: bold;">${totalVisits}</div>
+                                <div style="font-size: 0.9em; opacity: 0.9;">Total Visits</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5em; font-weight: bold;">Rs. ${totalSpent.toFixed(2)}</div>
+                                <div style="font-size: 0.9em; opacity: 0.9;">Total Spent</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5em; font-weight: bold;">${totalMedications}</div>
+                                <div style="font-size: 0.9em; opacity: 0.9;">Medications</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5em; font-weight: bold;">${totalServices}</div>
+                                <div style="font-size: 0.9em; opacity: 0.9;">Services</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Drug inventory filter functions
+        function showAllDrugs() {
+            displayInventory();
+            document.getElementById('inventoryFilterStatus').innerHTML = '📦 Showing all drugs';
+        }
+
+        function showExpiredDrugs() {
+            const today = new Date();
+            const expiredDrugs = drugs.filter(drug => {
+                const expiryDate = new Date(drug.expiry);
+                return expiryDate < today;
+            });
+            
+            displayFilteredInventory(expiredDrugs, 'Expired Drugs', '⚠️');
+            document.getElementById('inventoryFilterStatus').innerHTML = `⚠️ Showing ${expiredDrugs.length} expired drugs`;
+        }
+
+        function showNearExpiryDrugs() {
+            const today = new Date();
+            const nearExpiryDrugs = drugs.filter(drug => {
+                const expiryDate = new Date(drug.expiry);
+                const daysToExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                return daysToExpiry >= 0 && daysToExpiry <= 30;
+            });
+            
+            displayFilteredInventory(nearExpiryDrugs, 'Drugs Near Expiry (30 days or less)', '⏰');
+            document.getElementById('inventoryFilterStatus').innerHTML = `⏰ Showing ${nearExpiryDrugs.length} drugs near expiry`;
+        }
+
+        function showLowStockDrugs() {
+            const lowStockDrugs = drugs.filter(drug => drug.stock < 10);
+            
+            displayFilteredInventory(lowStockDrugs, 'Low Stock Drugs (Less than 10 units)', '📉');
+            document.getElementById('inventoryFilterStatus').innerHTML = `📉 Showing ${lowStockDrugs.length} low stock drugs`;
+        }
+
+        function displayFilteredInventory(filteredDrugs, title, icon) {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredDrugs.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #28a745; font-weight: bold;">
+                        ✅ No ${title.toLowerCase()} found! All drugs are in good condition.
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+
+            // Sort filtered drugs alphabetically by name
+            const sortedDrugs = [...filteredDrugs].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedDrugs.forEach(drug => {
+                const row = document.createElement('tr');
+                const status = getDrugStatus(drug);
+                
+                if (status === 'Expired') {
+                    row.classList.add('status-expired');
+                } else if (status === 'Low Stock') {
+                    row.classList.add('status-low-stock');
+                } else if (status === 'Near Expiry') {
+                    row.classList.add('status-near-expiry');
+                }
+
+                // Calculate days to expiry for additional info
+                const today = new Date();
+                const expiryDate = new Date(drug.expiry);
+                const daysToExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                
+                let expiryInfo = drug.expiry;
+                if (daysToExpiry < 0) {
+                    expiryInfo += ` (${Math.abs(daysToExpiry)} days ago)`;
+                } else if (daysToExpiry <= 30) {
+                    expiryInfo += ` (${daysToExpiry} days left)`;
+                }
+
+                row.innerHTML = `
+                    <td>${drug.name}</td>
+                    <td>${drug.stock}</td>
+                    <td>${drug.price.toFixed(2)}</td>
+                    <td>${expiryInfo}</td>
+                    <td>${status}</td>
+                    <td>
+                        <button class="btn" onclick="editDrug(${drug.id})" style="padding: 5px 10px;">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteDrug(${drug.id})" style="padding: 5px 10px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Drug inventory functions
+        function addNewDrug() {
+            const name = document.getElementById('drugName').value.trim();
+            const stock = parseInt(document.getElementById('drugStock').value);
+            const price = parseFloat(document.getElementById('drugPrice').value);
+            const expiry = document.getElementById('drugExpiry').value;
+
+            if (!name || !stock || !price || !expiry) {
+                showAlert('inventoryAlert', 'Please fill in all fields!', 'danger');
+                return;
+            }
+
+            const drug = {
+                id: drugs.length > 0 ? Math.max(...drugs.map(d => d.id)) + 1 : 1,
+                name: name,
+                stock: stock,
+                price: price,
+                expiry: expiry
+            };
+
+            drugs.push(drug);
+            localStorage.setItem('drugs', JSON.stringify(drugs));
+            displayInventory();
+            populateDropdowns();
+            clearDrugForm();
+            showAlert('inventoryAlert', 'Drug added successfully!', 'success');
+        }
+
+        function updateDrug() {
+            const name = document.getElementById('drugName').value.trim();
+            if (!name) {
+                showAlert('inventoryAlert', 'Please enter drug name to update!', 'danger');
+                return;
+            }
+
+            const drug = drugs.find(d => d.name.toLowerCase() === name.toLowerCase());
+            if (!drug) {
+                showAlert('inventoryAlert', 'Drug not found!', 'danger');
+                return;
+            }
+
+            const stock = document.getElementById('drugStock').value;
+            const price = document.getElementById('drugPrice').value;
+            const expiry = document.getElementById('drugExpiry').value;
+
+            if (stock) drug.stock = parseInt(stock);
+            if (price) drug.price = parseFloat(price);
+            if (expiry) drug.expiry = expiry;
+
+            localStorage.setItem('drugs', JSON.stringify(drugs));
+            displayInventory();
+            populateDropdowns();
+            clearDrugForm();
+            showAlert('inventoryAlert', 'Drug updated successfully!', 'success');
+        }
+
+        function displayInventory() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            // Sort drugs alphabetically by name
+            const sortedDrugs = [...drugs].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedDrugs.forEach(drug => {
+                const row = document.createElement('tr');
+                const status = getDrugStatus(drug);
+                
+                if (status === 'Expired') {
+                    row.classList.add('status-expired');
+                } else if (status === 'Low Stock') {
+                    row.classList.add('status-low-stock');
+                } else if (status === 'Near Expiry') {
+                    row.classList.add('status-near-expiry');
+                }
+
+                row.innerHTML = `
+                    <td>${drug.name}</td>
+                    <td>${drug.stock}</td>
+                    <td>${drug.price.toFixed(2)}</td>
+                    <td>${drug.expiry}</td>
+                    <td>${status}</td>
+                    <td>
+                        <button class="btn" onclick="editDrug(${drug.id})" style="padding: 5px 10px;">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteDrug(${drug.id})" style="padding: 5px 10px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getDrugStatus(drug) {
+            const today = new Date();
+            const expiryDate = new Date(drug.expiry);
+            const daysToExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+
+            if (daysToExpiry < 0) return 'Expired';
+            if (drug.stock < 10) return 'Low Stock';
+            if (daysToExpiry <= 30) return 'Near Expiry';
+            return 'Good';
+        }
+
+        function editDrug(drugId) {
+            const drug = drugs.find(d => d.id === drugId);
+            if (drug) {
+                document.getElementById('drugName').value = drug.name;
+                document.getElementById('drugStock').value = drug.stock;
+                document.getElementById('drugPrice').value = drug.price;
+                document.getElementById('drugExpiry').value = drug.expiry;
+            }
+        }
+
+        function deleteDrug(drugId) {
+            if (confirm('Are you sure you want to delete this drug?')) {
+                drugs = drugs.filter(d => d.id !== drugId);
+                localStorage.setItem('drugs', JSON.stringify(drugs));
+                displayInventory();
+                populateDropdowns();
+                showAlert('inventoryAlert', 'Drug deleted successfully!', 'success');
+            }
+        }
+
+        function clearDrugForm() {
+            document.getElementById('drugName').value = '';
+            document.getElementById('drugStock').value = '';
+            document.getElementById('drugPrice').value = '';
+            document.getElementById('drugExpiry').value = '';
+        }
+
+        // Patient list functions
+        function displayPatientList() {
+            const tbody = document.getElementById('patientListTableBody');
+            tbody.innerHTML = '';
+
+            // Sort patients alphabetically by name
+            const sortedPatients = [...patients].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedPatients.forEach(patient => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.gender}</td>
+                    <td>${patient.contact}</td>
+                    <td>${patient.lastVisit}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Billing functions
+        function loadPatientForBilling() {
+            // This function is now only called when a patient is selected from the dropdown
+            const patientId = parseInt(document.getElementById('billingPatientSelect').value);
+            if (patientId) {
+                currentPatient = patients.find(p => p.id === patientId);
+                updateBillingPatientDisplay();
+            }
+        }
+
+        function generateBill() {
+            // Use current patient instead of dropdown selection
+            if (!currentPatient) {
+                showAlert('billingAlert', 'No patient selected!', 'danger');
+                return;
+            }
+            
+            const patientId = currentPatient.id;
+            const consultationFee = parseFloat(document.getElementById('consultationFee').value) || 0;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            const patient = patients.find(p => p.id === patientId);
+            const patientTreatments = currentTreatments.filter(t => t.patientId === patientId);
+
+            if (patientTreatments.length === 0 && consultationFee === 0) {
+                showAlert('billingAlert', 'No treatments or consultation fee to bill!', 'danger');
+                return;
+            }
+
+            // Update drug stock
+            patientTreatments.forEach(treatment => {
+                if (treatment.type === 'medication') {
+                    const drug = drugs.find(d => d.id === treatment.drugId);
+                    if (drug) {
+                        drug.stock -= treatment.quantity;
+                    }
+                }
+            });
+
+            // Save treatments
+            treatments.push(...patientTreatments);
+            localStorage.setItem('treatments', JSON.stringify(treatments));
+            localStorage.setItem('drugs', JSON.stringify(drugs));
+
+            // Generate bill
+            const billId = bills.length + 1;
+            const subtotal = patientTreatments.reduce((sum, t) => sum + t.total, 0);
+            const total = subtotal + consultationFee;
+
+            const bill = {
+                id: billId,
+                patientId: patientId,
+                patientName: patient.name,
+                treatments: patientTreatments,
+                consultationFee: consultationFee,
+                subtotal: subtotal,
+                total: total,
+                paymentMethod: paymentMethod,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString()
+            };
+
+            bills.push(bill);
+            localStorage.setItem('bills', JSON.stringify(bills));
+
+            // Update patient last visit
+            patient.lastVisit = new Date().toISOString().split('T')[0];
+            localStorage.setItem('patients', JSON.stringify(patients));
+
+            displayBill(bill);
+            currentTreatments = [];
+            populateDropdowns();
+            showAlert('billingAlert', 'Bill generated successfully!', 'success');
+        }
+
+        function displayBill(bill) {
+            const container = document.getElementById('billDisplay');
+            let html = `
+                <div class="receipt">
+                    <div class="receipt-header">
+                             <img src="Logo.png" alt="PDS Clinic Logo" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                        <h2>🏥 Medical Centre & Special Diabetic Clinic</h2>
+                        <h3>Malawa - Kuruwita</h3>
+                        <p>Date: ${bill.date} | Time: ${bill.time}</p>
+                        <p>Patient: ${bill.patientName} (ID: ${bill.patientId})</p>
+                    </div>
+                    
+                    <div class="receipt-item">
+                        <span>Doctor's Consultation</span>
+                        <span>${bill.consultationFee.toFixed(2)}</span>
+                    </div>
+            `;
+
+            bill.treatments.forEach(treatment => {
+                html += `
+                    <div class="receipt-item">
+                        <span>${treatment.drugName} (${treatment.quantity})</span>
+                        <span>${treatment.total.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                    <div class="receipt-total">
+                        <div class="receipt-item">
+                            <span>TOTAL</span>
+                            <span>${bill.total.toFixed(2)}</span>
+                        </div>
+                        <div class="receipt-item">
+                            <span>Payment Method</span>
+                            <span>${bill.paymentMethod}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn btn-success" onclick="printReceipt()">🖨️ Print Receipt</button>
+                        <button class="btn btn-danger" onclick="closeBill()">❌ Close Receipt</button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function printReceipt() {
+            const billData = getCurrentBillData();
+            if (!billData) {
+                alert('No receipt data found!');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Receipt - ${billData.patientName}</title>
+                        <style>
+                            @page {
+                                size: 80mm auto;
+                                margin: 0;
+                            }
+                            body { 
+                                font-family: 'Courier New', monospace; 
+                                font-size: 12px;
+                                line-height: 1.2;
+                                margin: 0;
+                                padding: 5mm;
+                                width: 70mm;
+                                background: white;
+                                font-weight: bold;
+                            }
+                            .receipt { 
+                                width: 100%;
+                            }
+                            .center { text-align: center; }
+                            .bold { font-weight: bold; }
+                            .line { 
+                                border-top: 1px dashed #000; 
+                                margin: 3px 0; 
+                                height: 1px;
+                            }
+                            .double-line { 
+                                border-top: 2px solid #000; 
+                                margin: 5px 0; 
+                                height: 2px;
+                            }
+                            .item-row {
+                                display: flex;
+                                justify-content: space-between;
+                                margin: 2px 0;
+                            }
+                            .item-name {
+                                flex: 1;
+                                text-align: left;
+                            }
+                            .item-price {
+                                text-align: right;
+                                min-width: 60px;
+                            }
+                            .total-row {
+                                font-weight: bold;
+                                font-size: 14px;
+                            }
+                            .small { font-size: 10px; }
+                            .space { margin: 8px 0; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="receipt">
+                            <div class="center bold">
+                                <img src="Logo.png" alt="PDS Clinic Logo" style="max-width: 100px; height: auto; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;">
+                                MEDICAL CENTRE &<br>
+                                SPECIAL DIABETIC CLINIC<br>
+                                <div class="small">Malawa - Kuruwita</div>
+                            </div>
+                            
+                            <div class="double-line"></div>
+                            
+                            <div class="center">
+                                <div class="small">${billData.date} ${billData.time}</div>
+                            </div>
+                            
+                            <div class="line"></div>
+                            
+                            <div>
+                                <strong>Patient:</strong> ${billData.patientName}<br>
+                                <strong>ID:</strong> ${billData.patientId}
+                            </div>
+                            
+                            <div class="line"></div>
+                            
+                            <div class="item-row">
+                                <span class="item-name">Doctor's Consultation</span>
+                                <span class="item-price">${billData.consultationFee.toFixed(2)}</span>
+                            </div>
+                            
+                            ${billData.treatments.map(treatment => `
+                                <div class="item-row">
+                                    <span class="item-name">${treatment.drugName}</span>
+                                    <span class="item-price">${treatment.total.toFixed(2)}</span>
+                                </div>
+                                <div class="small" style="margin-left: 10px;">
+                                    Qty: ${treatment.quantity} x ${treatment.price.toFixed(2)}
+                                </div>
+                            `).join('')}
+                            
+                            <div class="line"></div>
+                            
+                            <div class="item-row">
+                                <span class="item-name">SUBTOTAL:</span>
+                                <span class="item-price">${billData.subtotal.toFixed(2)}</span>
+                            </div>
+                            
+                            <div class="double-line"></div>
+                            
+                            <div class="item-row total-row">
+                                <span class="item-name">TOTAL:</span>
+                                <span class="item-price">Rs. ${billData.total.toFixed(2)}</span>
+                            </div>
+                            
+                            <div class="line"></div>
+                            
+                            <div class="item-row">
+                                <span class="item-name">Payment:</span>
+                                <span class="item-price">${billData.paymentMethod}</span>
+                            </div>
+                            
+                            <div class="space"></div>
+                            
+                            <div class="center small">
+                                Thank you for visiting!<br>
+                                Get well soon!
+                            </div>
+                            
+                            <div class="space"></div>
+                            <div class="center small">
+                                Software Developed by AtuSoft-0783346633
+                            </div>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            
+            // Wait a moment for content to load, then print
+            setTimeout(() => {
+                printWindow.print();
+                // Close the print window after printing
+                setTimeout(() => {
+                    printWindow.close();
+                }, 1000);
+            }, 500);
+        }
+
+        // Helper function to get current bill data
+        function getCurrentBillData() {
+            // Try to get the most recent bill from the bills array
+            if (bills.length > 0) {
+                return bills[bills.length - 1];
+            }
+            return null;
+        }
+
+        function closeBill() {
+            const container = document.getElementById('billDisplay');
+            container.innerHTML = '';
+            
+            // Clear the billing form
+            document.getElementById('billingPatientSelect').value = '';
+            document.getElementById('consultationFee').value = '';
+            document.getElementById('paymentMethod').value = 'Cash';
+            
+            showAlert('billingAlert', 'Receipt closed successfully!', 'success');
+        }
+
+        // Reports functions
+        function updateReports() {
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = new Date().toISOString().slice(0, 7);
+
+            // Today's revenue
+            const todayBills = bills.filter(b => b.date === today);
+            const todayRevenue = todayBills.reduce((sum, b) => sum + b.total, 0);
+            document.getElementById('todayRevenue').textContent = todayRevenue.toFixed(2);
+
+            // This month's revenue
+            const monthBills = bills.filter(b => b.date.startsWith(currentMonth));
+            const monthRevenue = monthBills.reduce((sum, b) => sum + b.total, 0);
+            document.getElementById('monthRevenue').textContent = monthRevenue.toFixed(2);
+
+            // Total patients
+            document.getElementById('totalPatients').textContent = patients.length;
+
+            // Today's patients
+            const todayPatients = patients.filter(p => p.lastVisit === today).length;
+            document.getElementById('todayPatients').textContent = todayPatients;
+
+            // Set current month in report selector
+            document.getElementById('reportMonth').value = currentMonth;
+        }
+
+        function generateMonthlyReport() {
+            const selectedMonth = document.getElementById('reportMonth').value;
+            const container = document.getElementById('monthlyReportDisplay');
+
+            if (!selectedMonth) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const monthBills = bills.filter(b => b.date.startsWith(selectedMonth));
+            
+            if (monthBills.length === 0) {
+                container.innerHTML = '<p>No data found for selected month.</p>';
+                return;
+            }
+
+            const totalRevenue = monthBills.reduce((sum, b) => sum + b.total, 0);
+            const totalPatients = new Set(monthBills.map(b => b.patientId)).size;
+
+            let html = `
+                <div class="patient-card">
+                    <h4>📊 Monthly Report - ${selectedMonth}</h4>
+                    <p><strong>Total Revenue:</strong> ${totalRevenue.toFixed(2)}</p>
+                    <p><strong>Total Patients Served:</strong> ${totalPatients}</p>
+                    <p><strong>Total Bills Generated:</strong> ${monthBills.length}</p>
+                    <p><strong>Average Bill Amount:</strong> ${(totalRevenue / monthBills.length).toFixed(2)}</p>
+                </div>
+                
+                <h4>Daily Breakdown:</h4>
+            `;
+
+            // Group by date
+            const dailyData = {};
+            monthBills.forEach(bill => {
+                if (!dailyData[bill.date]) {
+                    dailyData[bill.date] = { revenue: 0, patients: new Set(), bills: 0 };
+                }
+                dailyData[bill.date].revenue += bill.total;
+                dailyData[bill.date].patients.add(bill.patientId);
+                dailyData[bill.date].bills++;
+            });
+
+            Object.keys(dailyData).sort().forEach(date => {
+                const data = dailyData[date];
+                html += `
+                    <div class="treatment-item">
+                        <strong>${date}</strong><br>
+                        Revenue: ${data.revenue.toFixed(2)} | Patients: ${data.patients.size} | Bills: ${data.bills}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Daily Patient Report Functions
+        function loadDailyReport() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayBills = bills.filter(bill => bill.date === today);
+            
+            // Update date display
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dailyReportDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+            
+            // Get patient details for each bill
+            const reportData = [];
+            todayBills.forEach(bill => {
+                const patient = patients.find(p => p.id === bill.patientId);
+                if (patient) {
+                    reportData.push({
+                        patientId: patient.id,
+                        patientName: patient.name,
+                        contact: patient.contact,
+                        paymentMethod: bill.paymentMethod,
+                        amount: bill.total,
+                        time: bill.time
+                    });
+                }
+            });
+            
+            // Sort by patient name
+            reportData.sort((a, b) => a.patientName.localeCompare(b.patientName));
+            
+            // Calculate summary statistics
+            const totalPatients = reportData.length;
+            const totalRevenue = reportData.reduce((sum, item) => sum + item.amount, 0);
+            const avgPayment = totalPatients > 0 ? totalRevenue / totalPatients : 0;
+            
+            // Update summary display
+            document.getElementById('dailyTotalPatients').textContent = totalPatients;
+            document.getElementById('dailyTotalRevenue').textContent = totalRevenue.toFixed(2);
+            document.getElementById('dailyAvgPayment').textContent = avgPayment.toFixed(2);
+            
+            // Populate table
+            const tbody = document.getElementById('dailyReportTableBody');
+            tbody.innerHTML = '';
+            
+            if (reportData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No patient payments for today.</td></tr>';
+                return;
+            }
+            
+            reportData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.patientId}</td>
+                    <td>${item.patientName}</td>
+                    <td>${item.contact}</td>
+                    <td>${item.paymentMethod}</td>
+                    <td>Rs. ${item.amount.toFixed(2)}</td>
+                    <td>${item.time}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.style.fontWeight = 'bold';
+            totalRow.style.backgroundColor = '#f8f9fa';
+            totalRow.innerHTML = `
+                <td colspan="4" style="text-align: right;">Total:</td>
+                <td>Rs. ${totalRevenue.toFixed(2)}</td>
+                <td></td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        function printDailyReport() {
+            const printWindow = window.open('', '_blank');
+            const today = new Date().toLocaleDateString();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = new Date().toLocaleDateString('en-US', dateOptions);
+            
+            // Get the table HTML
+            const table = document.getElementById('dailyReportTable');
+            const tableHTML = table.outerHTML;
+            
+            // Get summary data
+            const totalPatients = document.getElementById('dailyTotalPatients').textContent;
+            const totalRevenue = document.getElementById('dailyTotalRevenue').textContent;
+            const avgPayment = document.getElementById('dailyAvgPayment').textContent;
+            
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Daily Patient Report - ${today}</title>
+                        <style>
+                            body { 
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                margin: 0;
+                                padding: 20px;
+                                color: #333;
+                            }
+                            .header { 
+                                text-align: center;
+                                margin-bottom: 30px;
+                                border-bottom: 2px solid #3498db;
+                                padding-bottom: 20px;
+                            }
+                            .header h1 {
+                                color: #2c3e50;
+                                margin-bottom: 10px;
+                            }
+                            .header h2 {
+                                color: #34495e;
+                                font-weight: normal;
+                                margin: 5px 0 15px 0;
+                            }
+                            .date {
+                                color: #e74c3c;
+                                font-size: 1.2em;
+                                font-weight: bold;
+                                margin-bottom: 10px;
+                            }
+                            .summary {
+                                display: flex;
+                                justify-content: space-around;
+                                margin-bottom: 30px;
+                                flex-wrap: wrap;
+                            }
+                            .summary-item {
+                                text-align: center;
+                                padding: 15px;
+                                background: #f8f9fa;
+                                border-radius: 8px;
+                                min-width: 150px;
+                                margin: 10px;
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                            }
+                            .summary-value {
+                                font-size: 1.8em;
+                                font-weight: bold;
+                                color: #3498db;
+                                margin-bottom: 5px;
+                            }
+                            .summary-label {
+                                color: #7f8c8d;
+                            }
+                            table { 
+                                width: 100%; 
+                                border-collapse: collapse; 
+                                margin-bottom: 30px;
+                            }
+                            th, td { 
+                                border: 1px solid #ddd; 
+                                padding: 12px; 
+                                text-align: left; 
+                            }
+                            th { 
+                                background-color: #3498db; 
+                                color: white; 
+                                font-weight: bold;
+                            }
+                            tr:nth-child(even) {
+                                background-color: #f2f2f2;
+                            }
+                            .total-row {
+                                font-weight: bold;
+                                background-color: #e8f4fd !important;
+                            }
+                            .footer {
+                                margin-top: 30px;
+                                text-align: center;
+                                font-size: 0.9em;
+                                color: #7f8c8d;
+                            }
+                            @media print {
+                                body { padding: 10px; }
+                                .no-print { display: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <img src="Logo.png" alt="PDS Clinic Logo" style="max-width: 150px; height: auto; margin-bottom: 15px;">
+                            <h1>Medical Centre & Special Diabetic Clinic</h1>
+                            <h2>Malawa - Kuruwita</h2>
+                            <div class="date">${formattedDate}</div>
+                        </div>
+                        
+                        <div class="summary">
+                            <div class="summary-item">
+                                <div class="summary-value">${totalPatients}</div>
+                                <div class="summary-label">Total Patients</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value">Rs. ${totalRevenue}</div>
+                                <div class="summary-label">Total Revenue</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value">Rs. ${avgPayment}</div>
+                                <div class="summary-label">Avg. Payment</div>
+                            </div>
+                        </div>
+                        
+                        ${tableHTML}
+                        
+                        <div class="footer">
+                            <p>Generated on: ${new Date().toLocaleString()}</p>
+                            <p>Medical Centre & Special Diabetic Clinic - Malawa, Kuruwita</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function exportDailyReport() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayBills = bills.filter(bill => bill.date === today);
+            
+            // Get patient details for each bill
+            const reportData = [];
+            todayBills.forEach(bill => {
+                const patient = patients.find(p => p.id === bill.patientId);
+                if (patient) {
+                    reportData.push({
+                        patientId: patient.id,
+                        patientName: patient.name,
+                        contact: patient.contact,
+                        paymentMethod: bill.paymentMethod,
+                        amount: bill.total,
+                        time: bill.time
+                    });
+                }
+            });
+            
+            // Sort by patient name
+            reportData.sort((a, b) => a.patientName.localeCompare(b.patientName));
+            
+            // Create CSV content
+            let csvContent = "Patient ID,Patient Name,Contact,Payment Method,Amount Paid,Time\n";
+            
+            reportData.forEach(item => {
+                csvContent += `${item.patientId},"${item.patientName}","${item.contact}",${item.paymentMethod},${item.amount.toFixed(2)},${item.time}\n`;
+            });
+            
+            // Add total row
+            const totalRevenue = reportData.reduce((sum, item) => sum + item.amount, 0);
+            csvContent += `,,,,${totalRevenue.toFixed(2)},\n`;
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `daily-patient-report-${today}.csv`;
+            link.click();
+            
+            showAlert('dailyReportAlert', 'Daily report exported successfully!', 'success');
+        }
+
+        // Patient History Cleanup Functions
+        function cleanupOldPatientHistory() {
+            const sixMonthsAgo = new Date();
+            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+            const cutoffDate = sixMonthsAgo.toISOString().split('T')[0];
+            
+            // Count records before cleanup
+            const originalTreatmentCount = treatments.length;
+            const originalBillCount = bills.length;
+            
+            // Remove treatments older than 6 months
+            treatments = treatments.filter(treatment => treatment.date >= cutoffDate);
+            
+            // Remove bills older than 6 months
+            bills = bills.filter(bill => bill.date >= cutoffDate);
+            
+            // Save updated data
+            localStorage.setItem('treatments', JSON.stringify(treatments));
+            localStorage.setItem('bills', JSON.stringify(bills));
+            
+            // Log cleanup results
+            const deletedTreatments = originalTreatmentCount - treatments.length;
+            const deletedBills = originalBillCount - bills.length;
+            
+            if (deletedTreatments > 0 || deletedBills > 0) {
+                console.log(`🧹 Automatic cleanup completed: Removed ${deletedTreatments} old treatments and ${deletedBills} old bills (older than 6 months)`);
+            }
+        }
+
+        function manualCleanupHistory() {
+            const confirmation = confirm(
+                '🧹 PATIENT HISTORY CLEANUP\n\n' +
+                'This will permanently delete:\n' +
+                '• All treatment records older than 6 months\n' +
+                '• All billing records older than 6 months\n\n' +
+                'Patient basic information will be preserved.\n\n' +
+                'Do you want to proceed with the cleanup?'
+            );
+
+            if (!confirmation) {
+                showAlert('settingsAlert', 'History cleanup cancelled.', 'success');
+                return;
+            }
+
+            const sixMonthsAgo = new Date();
+            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+            const cutoffDate = sixMonthsAgo.toISOString().split('T')[0];
+            
+            // Count records before cleanup
+            const originalTreatmentCount = treatments.length;
+            const originalBillCount = bills.length;
+            
+            // Remove old records
+            const oldTreatments = treatments.filter(treatment => treatment.date < cutoffDate);
+            const oldBills = bills.filter(bill => bill.date < cutoffDate);
+            
+            treatments = treatments.filter(treatment => treatment.date >= cutoffDate);
+            bills = bills.filter(bill => bill.date >= cutoffDate);
+            
+            // Save updated data
+            localStorage.setItem('treatments', JSON.stringify(treatments));
+            localStorage.setItem('bills', JSON.stringify(bills));
+            
+            // Update displays
+            updateReports();
+            updateSettingsDisplay();
+            
+            const deletedTreatments = originalTreatmentCount - treatments.length;
+            const deletedBills = originalBillCount - bills.length;
+            const totalDeleted = deletedTreatments + deletedBills;
+            
+            if (totalDeleted > 0) {
+                showAlert('settingsAlert', 
+                    `🧹 Cleanup completed! Removed ${deletedTreatments} old treatments and ${deletedBills} old bills (older than ${cutoffDate}). ` +
+                    `Patient records remain intact.`, 
+                    'success'
+                );
+            } else {
+                showAlert('settingsAlert', '✅ No old records found to clean up. All data is within the 6-month period.', 'success');
+            }
+        }
+
+        // Settings functions
+        function updateSettingsDisplay() {
+            const totalRevenue = bills.reduce((sum, b) => sum + b.total, 0);
+            
+            document.getElementById('settingsPatientCount').textContent = patients.length;
+            document.getElementById('settingsTreatmentCount').textContent = treatments.length;
+            document.getElementById('settingsBillCount').textContent = bills.length;
+            document.getElementById('settingsDrugCount').textContent = drugs.length;
+            document.getElementById('settingsTotalRevenue').textContent = totalRevenue.toFixed(2);
+        }
+
+        function showImportDatabase() {
+            document.getElementById('databaseImportSection').style.display = 'block';
+        }
+
+        function hideDatabaseImport() {
+            document.getElementById('databaseImportSection').style.display = 'none';
+            document.getElementById('databaseFile').value = '';
+            document.getElementById('databaseImportPreview').innerHTML = '';
+        }
+
+        function importDatabaseFile() {
+            const fileInput = document.getElementById('databaseFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('settingsAlert', 'Please select a database backup file to import!', 'danger');
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.json')) {
+                showAlert('settingsAlert', 'Please select a valid JSON backup file!', 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate the imported data structure
+                    if (!importedData.patients || !importedData.treatments || !importedData.bills || !importedData.drugs) {
+                        showAlert('settingsAlert', 'Invalid backup file format! Missing required data sections.', 'danger');
+                        return;
+                    }
+
+                    // Show preview of what will be imported
+                    previewDatabaseImport(importedData);
+                    
+                } catch (error) {
+                    showAlert('settingsAlert', 'Error reading backup file. Please ensure it\'s a valid JSON file exported from this system.', 'danger');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function previewDatabaseImport(importedData) {
+            const currentTotalRevenue = bills.reduce((sum, b) => sum + b.total, 0);
+            const importTotalRevenue = importedData.bills.reduce((sum, b) => sum + b.total, 0);
+            
+            let html = `
+                <div style="background: white; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                    <h4>📋 Database Import Preview</h4>
+                    <p><strong>Backup Information:</strong></p>
+                    <div style="background: #e8f4fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>📅 Export Date:</strong> ${importedData.exportDate ? new Date(importedData.exportDate).toLocaleString() : 'Unknown'}<br>
+                        <strong>🏥 Clinic:</strong> ${importedData.clinicName || 'Unknown'}<br>
+                        <strong>📍 Location:</strong> ${importedData.location || 'Unknown'}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+                        <div>
+                            <h5>📊 Current Database:</h5>
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                                <strong>Patients:</strong> ${patients.length}<br>
+                                <strong>Treatments:</strong> ${treatments.length}<br>
+                                <strong>Bills:</strong> ${bills.length}<br>
+                                <strong>Drugs:</strong> ${drugs.length}<br>
+                                <strong>Total Revenue:</strong> Rs. ${currentTotalRevenue.toFixed(2)}
+                            </div>
+                        </div>
+                        <div>
+                            <h5>📥 Import Data:</h5>
+                            <div style="background: #d4edda; padding: 10px; border-radius: 5px;">
+                                <strong>Patients:</strong> ${importedData.patients.length}<br>
+                                <strong>Treatments:</strong> ${importedData.treatments.length}<br>
+                                <strong>Bills:</strong> ${importedData.bills.length}<br>
+                                <strong>Drugs:</strong> ${importedData.drugs.length}<br>
+                                <strong>Total Revenue:</strong> Rs. ${importTotalRevenue.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #ffc107;">
+                        <strong>⚠️ Warning:</strong> This will completely replace your current database with the imported data. Your current data will be lost unless you export it first!
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button class="btn btn-success" onclick="confirmDatabaseImport()">
+                            ✅ Confirm Import & Replace Database
+                        </button>
+                        <button class="btn btn-danger" onclick="cancelDatabaseImport()">Cancel Import</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('databaseImportPreview').innerHTML = html;
+            
+            // Store imported data for confirmation
+            window.pendingDatabaseImport = importedData;
+        }
+
+        function confirmDatabaseImport() {
+            if (!window.pendingDatabaseImport) {
+                showAlert('settingsAlert', 'No import data found!', 'danger');
+                return;
+            }
+
+            const finalConfirm = confirm(
+                '🚨 FINAL CONFIRMATION 🚨\n\n' +
+                'This will permanently replace ALL your current data with the imported backup.\n\n' +
+                'Current data will be LOST FOREVER!\n\n' +
+                'Are you absolutely sure you want to proceed?'
+            );
+
+            if (!finalConfirm) {
+                showAlert('settingsAlert', 'Database import cancelled.', 'success');
+                return;
+            }
+
+            try {
+                const importedData = window.pendingDatabaseImport;
+                
+                // Replace all data with imported data
+                patients = importedData.patients || [];
+                treatments = importedData.treatments || [];
+                bills = importedData.bills || [];
+                drugs = importedData.drugs || [];
+                
+                // Update current patient ID to avoid conflicts
+                currentPatientId = patients.length > 0 ? Math.max(...patients.map(p => p.id)) + 1 : 1;
+                
+                // Clear current treatments
+                currentTreatments = [];
+                
+                // Save to localStorage
+                localStorage.setItem('patients', JSON.stringify(patients));
+                localStorage.setItem('treatments', JSON.stringify(treatments));
+                localStorage.setItem('bills', JSON.stringify(bills));
+                localStorage.setItem('drugs', JSON.stringify(drugs));
+                
+                // Update all displays
+                generateNextPatientId();
+                populateDropdowns();
+                displayInventory();
+                displayPatientList();
+                updateReports();
+                updateSettingsDisplay();
+                
+                // Hide import section
+                hideDatabaseImport();
+                
+                showAlert('settingsAlert', 
+                    `✅ Database imported successfully! ` +
+                    `Imported ${patients.length} patients, ${treatments.length} treatments, ` +
+                    `${bills.length} bills, and ${drugs.length} drugs.`, 
+                    'success'
+                );
+                
+                // Clear pending data
+                window.pendingDatabaseImport = null;
+                
+            } catch (error) {
+                showAlert('settingsAlert', 'Error importing database. Please try again with a valid backup file.', 'danger');
+            }
+        }
+
+        function cancelDatabaseImport() {
+            document.getElementById('databaseImportPreview').innerHTML = '';
+            window.pendingDatabaseImport = null;
+            showAlert('settingsAlert', 'Database import cancelled.', 'success');
+        }
+
+        function confirmDatabaseReset() {
+            const confirmation = confirm(
+                '⚠️ FINAL WARNING ⚠️\n\n' +
+                'This will permanently delete ALL data including:\n' +
+                '• All patient records\n' +
+                '• All treatment history\n' +
+                '• All billing records\n' +
+                '• All revenue data\n' +
+                '• Custom drug inventory\n\n' +
+                'This action CANNOT be undone!\n\n' +
+                'Are you absolutely sure you want to reset the database?'
+            );
+
+            if (confirmation) {
+                const doubleConfirm = confirm(
+                    'Last chance to cancel!\n\n' +
+                    'Type "RESET" in the next dialog to confirm database reset.'
+                );
+
+                if (doubleConfirm) {
+                    const finalConfirm = prompt('Type "RESET" to confirm (case sensitive):');
+                    if (finalConfirm === 'RESET') {
+                        resetDatabase();
+                    } else {
+                        showAlert('settingsAlert', 'Database reset cancelled - incorrect confirmation text.', 'success');
+                    }
+                } else {
+                    showAlert('settingsAlert', 'Database reset cancelled.', 'success');
+                }
+            } else {
+                showAlert('settingsAlert', 'Database reset cancelled.', 'success');
+            }
+        }
+
+        function resetDatabase() {
+            // Clear all data
+            patients = [];
+            treatments = [];
+            bills = [];
+            currentTreatments = [];
+            currentPatientId = 1;
+            
+            // Reset drugs to empty
+            drugs = [];
+
+            // Clear localStorage
+            localStorage.removeItem('patients');
+            localStorage.removeItem('treatments');
+            localStorage.removeItem('bills');
+            localStorage.setItem('drugs', JSON.stringify(drugs));
+
+            // Update displays
+            generateNextPatientId();
+            populateDropdowns();
+            displayInventory();
+            displayPatientList();
+            updateReports();
+            updateSettingsDisplay();
+
+            showAlert('settingsAlert', '✅ Database has been successfully reset! All data has been cleared and drug inventory is now empty.', 'success');
+        }
+
+        function exportData() {
+            const exportData = {
+                patients: patients,
+                treatments: treatments,
+                bills: bills,
+                drugs: drugs,
+                exportDate: new Date().toISOString(),
+                clinicName: 'Medical Centre & Special Diabetic Clinic',
+                location: 'Malawa - Kuruwita'
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `medical-system-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+
+            showAlert('settingsAlert', '📤 Data backup exported successfully! Save this file in a secure location.', 'success');
+        }
+
+        // Excel Import functions
+        function showImportSection() {
+            document.getElementById('importSection').style.display = 'block';
+        }
+
+        function hideImportSection() {
+            document.getElementById('importSection').style.display = 'none';
+            document.getElementById('excelFile').value = '';
+            document.getElementById('importPreview').innerHTML = '';
+        }
+
+        function downloadTemplate() {
+            const templateData = [
+                ['Drug Name', 'Stock Quantity', 'Unit Price', 'Expiry Date'],
+                ['Sample Drug 1', '100', '2.50', '2024-12-31'],
+                ['Sample Drug 2', '50', '5.00', '2024-06-30'],
+                ['Sample Drug 3', '75', '3.25', '2025-03-15']
+            ];
+
+            let csvContent = templateData.map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'drug-inventory-template.csv';
+            link.click();
+            
+            showAlert('inventoryAlert', '📄 Template downloaded! Fill it with your drug data and import it back.', 'success');
+        }
+
+        function importExcelData() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('inventoryAlert', 'Please select a file to import!', 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    let rows;
+                    
+                    // Handle CSV files
+                    if (file.name.toLowerCase().endsWith('.csv')) {
+                        rows = text.split('\n').map(row => row.split(','));
+                    } else {
+                        // For Excel files, we'll treat them as CSV for simplicity
+                        // In a real application, you'd use a library like SheetJS
+                        showAlert('inventoryAlert', 'Please save your Excel file as CSV format and try again.', 'warning');
+                        return;
+                    }
+                    
+                    // Remove empty rows and header row
+                    rows = rows.filter(row => row.length >= 4 && row[0].trim() !== '' && row[0].toLowerCase() !== 'drug name');
+                    
+                    if (rows.length === 0) {
+                        showAlert('inventoryAlert', 'No valid data found in the file!', 'danger');
+                        return;
+                    }
+                    
+                    // Preview the data
+                    previewImportData(rows);
+                    
+                } catch (error) {
+                    showAlert('inventoryAlert', 'Error reading file. Please check the format and try again.', 'danger');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function previewImportData(rows) {
+            let html = `
+                <div style="background: white; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                    <h4>📋 Import Preview (${rows.length} drugs found)</h4>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table class="table" style="font-size: 0.9em;">
+                            <thead>
+                                <tr>
+                                    <th>Drug Name</th>
+                                    <th>Stock</th>
+                                    <th>Price</th>
+                                    <th>Expiry</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            const validRows = [];
+            
+            rows.forEach((row, index) => {
+                const drugName = row[0] ? row[0].trim() : '';
+                const stock = parseInt(row[1]);
+                const price = parseFloat(row[2]);
+                const expiry = row[3] ? row[3].trim() : '';
+                
+                let status = '✅ Valid';
+                let rowClass = '';
+                
+                // Validation
+                if (!drugName) {
+                    status = '❌ Missing name';
+                    rowClass = 'style="background: #f8d7da;"';
+                } else if (isNaN(stock) || stock < 0) {
+                    status = '❌ Invalid stock';
+                    rowClass = 'style="background: #f8d7da;"';
+                } else if (isNaN(price) || price <= 0) {
+                    status = '❌ Invalid price';
+                    rowClass = 'style="background: #f8d7da;"';
+                } else if (!expiry || !isValidDate(expiry)) {
+                    status = '❌ Invalid date';
+                    rowClass = 'style="background: #f8d7da;"';
+                } else {
+                    validRows.push({
+                        name: drugName,
+                        stock: stock,
+                        price: price,
+                        expiry: expiry
+                    });
+                }
+                
+                html += `
+                    <tr ${rowClass}>
+                        <td>${drugName}</td>
+                        <td>${isNaN(stock) ? row[1] : stock}</td>
+                        <td>${isNaN(price) ? row[2] : price.toFixed(2)}</td>
+                        <td>${expiry}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <p><strong>${validRows.length} valid drugs</strong> ready to import</p>
+                        <button class="btn btn-success" onclick="confirmImport()" ${validRows.length === 0 ? 'disabled' : ''}>
+                            ✅ Confirm Import (${validRows.length} drugs)
+                        </button>
+                        <button class="btn btn-danger" onclick="cancelImport()">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('importPreview').innerHTML = html;
+            
+            // Store valid rows for import
+            window.pendingImportData = validRows;
+        }
+
+        function isValidDate(dateString) {
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!regex.test(dateString)) return false;
+            
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+
+        function confirmImport() {
+            if (!window.pendingImportData || window.pendingImportData.length === 0) {
+                showAlert('inventoryAlert', 'No valid data to import!', 'danger');
+                return;
+            }
+            
+            let importedCount = 0;
+            let updatedCount = 0;
+            
+            window.pendingImportData.forEach(drugData => {
+                // Check if drug already exists
+                const existingDrug = drugs.find(d => d.name.toLowerCase() === drugData.name.toLowerCase());
+                
+                if (existingDrug) {
+                    // Update existing drug
+                    existingDrug.stock = drugData.stock;
+                    existingDrug.price = drugData.price;
+                    existingDrug.expiry = drugData.expiry;
+                    updatedCount++;
+                } else {
+                    // Add new drug
+                    const newDrug = {
+                        id: drugs.length > 0 ? Math.max(...drugs.map(d => d.id)) + 1 : 1,
+                        name: drugData.name,
+                        stock: drugData.stock,
+                        price: drugData.price,
+                        expiry: drugData.expiry
+                    };
+                    drugs.push(newDrug);
+                    importedCount++;
+                }
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('drugs', JSON.stringify(drugs));
+            
+            // Update displays
+            displayInventory();
+            populateDropdowns();
+            hideImportSection();
+            
+            showAlert('inventoryAlert', 
+                `✅ Import completed! ${importedCount} new drugs added, ${updatedCount} drugs updated.`, 
+                'success'
+            );
+            
+            // Clear pending data
+            window.pendingImportData = null;
+        }
+
+        function cancelImport() {
+            document.getElementById('importPreview').innerHTML = '';
+            window.pendingImportData = null;
+        }
+
+        // Patient display functions
+        function updateTreatmentPatientDisplay() {
+            if (currentPatient) {
+                document.getElementById('treatmentPatientName').textContent = 
+                    `${currentPatient.name} (ID: ${currentPatient.id})`;
+                document.getElementById('treatmentPatientDisplay').style.display = 'block';
+                document.getElementById('treatmentPatientSelectContainer').style.display = 'none';
+            } else {
+                document.getElementById('treatmentPatientName').textContent = 'No patient selected';
+                document.getElementById('treatmentPatientDisplay').style.display = 'block';
+                document.getElementById('treatmentPatientSelectContainer').style.display = 'none';
+            }
+        }
+
+        function updateBillingPatientDisplay() {
+            if (currentPatient) {
+                document.getElementById('billingPatientName').textContent = 
+                    `${currentPatient.name} (ID: ${currentPatient.id})`;
+                document.getElementById('billingPatientDisplay').style.display = 'block';
+                document.getElementById('billingPatientSelectContainer').style.display = 'none';
+            } else {
+                document.getElementById('billingPatientName').textContent = 'No patient selected';
+                document.getElementById('billingPatientDisplay').style.display = 'block';
+                document.getElementById('billingPatientSelectContainer').style.display = 'none';
+            }
+        }
+
+        function changeTreatmentPatient() {
+            document.getElementById('treatmentPatientDisplay').style.display = 'none';
+            document.getElementById('treatmentPatientSelectContainer').style.display = 'block';
+            populateDropdowns(); // Refresh the dropdown options
+        }
+
+        function cancelChangeTreatmentPatient() {
+            document.getElementById('treatmentPatientDisplay').style.display = 'block';
+            document.getElementById('treatmentPatientSelectContainer').style.display = 'none';
+        }
+
+        function changeBillingPatient() {
+            document.getElementById('billingPatientDisplay').style.display = 'none';
+            document.getElementById('billingPatientSelectContainer').style.display = 'block';
+            populateDropdowns(); // Refresh the dropdown options
+        }
+
+        function cancelChangeBillingPatient() {
+            document.getElementById('billingPatientDisplay').style.display = 'block';
+            document.getElementById('billingPatientSelectContainer').style.display = 'none';
+        }
+
+        // Utility functions
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function exitSystem() {
+            if (confirm('Are you sure you want to exit the Medical Management System?')) {
+                alert('Thank you for using the Medical Management System!');
+                window.close();
+            }
+        }
+
+        function openFullscreen() {
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) docEl.requestFullscreen();
+            else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+            else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen();
+        }
+    </script>
+ <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('✅ Service Worker Registered'))
+    .catch(err => console.error('❌ Service Worker failed:', err));
+  }
+  </script>
+    
+</body>
+</html>
